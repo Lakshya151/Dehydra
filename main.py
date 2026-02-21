@@ -19,11 +19,24 @@ def sendNotification(title,message):
         notification.notify(
             title=title,
             message=message,
-            timeout=10
+            timeout=60
         )
     else:
         subprocess.run(["notify-send", title, message])
     
+def askUser():
+    tell_me=input("Have you drink water ? :").strip().lower()
+    if tell_me=="yes":
+        print("OK!")
+    else:
+        while True:
+            time.sleep(10)
+            tell_again=input("Pani piya ? :").strip().lower()
+            if tell_again=="yes":
+                print("OK!")
+                break
+            else:
+                sendNotification(title="pani piya ?", message="Reminder: Bsdk Pani to peele ?")
 
 def startNotifications(delay : int ,title : str,message : str):
     stopStart=dtime(0,0,0) 
@@ -33,9 +46,14 @@ def startNotifications(delay : int ,title : str,message : str):
         if not stopStart<=now<=stopEnd:
             time.sleep(delay)
             sendNotification(title=title,message=message)
+            time.sleep(30)
+            askUser()
+        else:
+            time.sleep(3600)
+            
 
 def main():
-    startNotifications(5,"paani peelo","jaldi paani peelo fast fast")
+    startNotifications(60,"paani peelo","jaldi paani peelo fast fast")
 
 if __name__ == "__main__":
     main()
