@@ -1,16 +1,29 @@
 import time
 from plyer import notification
 from datetime import datetime ,time as dtime
-import winsound
+
+
+import platform
+
+if platform.system() == "Windows":
+    import winsound
+else:
+    import subprocess
+
+
 
 
 def sendNotification(title,message):
-    winsound.Beep(1000,400) 
-    notification.notify(
-        title=title,
-        message=message,
-        timeout=10
-    )
+    if platform.system() == "Windows":
+        winsound.Beep(1000,400) 
+        notification.notify(
+            title=title,
+            message=message,
+            timeout=10
+        )
+    else:
+        subprocess.run(["notify-send", title, message])
+    
 
 def startNotifications(delay : int ,title : str,message : str):
     stopStart=dtime(0,0,0) 
