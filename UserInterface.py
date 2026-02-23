@@ -1,16 +1,19 @@
 import tkinter as tk
 from main import startNotifications
 import threading
+from datetime import datetime ,time as dtime
 
 
 def on_button_click():
     try:
+        startTime=datetime.strptime("00:00:00","%H:%M:%S").time() 
+        stopTime=datetime.strptime("07:00:00","%H:%M:%S").time() 
         title = entry1.get()
         message = entry2.get()
 
         t = threading.Thread(
             target=startNotifications,
-            args=(5,title, message),
+            args=(5,title, message,startTime,stopTime),
            
         )
         t.start()
