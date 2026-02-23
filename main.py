@@ -11,8 +11,6 @@ else:
     import subprocess
 
 
-
-
 def sendNotification(title,message):
     if platform.system() == "Windows":
         winsound.Beep(1000,400) 
@@ -24,36 +22,47 @@ def sendNotification(title,message):
     else:
         subprocess.run(["notify-send", title, message])
     
-def askUser():
-    tell_me=input("Have you drink water ? :").strip().lower()
+def askUser(title,message):
+    tell_me=input(f"Have you {title} ? :").strip().lower()
     if tell_me=="yes":
         print("OK!")
     else:
         while True:
             time.sleep(10)
-            tell_again=input("Pani piya ? :").strip().lower()
+            tell_again=input(f"{title} ?" ).strip().lower()
             if tell_again=="yes":
                 print("OK!")
                 break
             else:
-                sendNotification(title="pani piya ?", message="Reminder: Bsdk Pani to peele ?")
+                sendNotification(title=title, message=f"Reminder:{message}")
 
-def startNotifications(delay : int ,title : str,message : str):
-    stopStart=dtime(0,0,0) 
-    stopEnd=dtime(6,0,0) 
+def startNotifications(delay : int ,title : str,message : str, stopStart,stopEnd):
     while True:
         now=datetime.now().time()
-        if not stopStart<=now<=stopEnd:
+        if stopStart<stopEnd:
+            in_stop_time=stopStart<=now<=stopEnd
+        else:
+            in_stop_time=now>=stopStart or now<=stopEnd
+        if not in_stop_time:
             time.sleep(delay)
             sendNotification(title=title,message=message)
             time.sleep(30)
-            askUser()
+            askUser(title,message)
         else:
-            time.sleep(3600)
+            time.sleep(60)
             
 
 def main():
-    startNotifications(60,"paani peelo","jaldi paani peelo fast fast")
+    start_time_input = input("Enter stop start time (HH:MM:SS): ")
+    end_time_input = input("Enter stop end time (HH:MM:SS): ")
+
+    stopStart=datetime.strptime(start_time_input,"%H:%M:%S").time() 
+    stopEnd=datetime.strptime(end_time_input,"%H:%M:%S").time()
+
+    TimeInterval=int(input("Enter the Time Interval :"))
+    ReminderFor=input("This reminder is for :")
+    Msg=input("Enter the message that you want to show in notificaton :")
+    startNotifications(TimeInterval,ReminderFor,Msg,stopStart,stopEnd)
 
 if __name__ == "__main__":
     main()
