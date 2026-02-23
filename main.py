@@ -1,11 +1,10 @@
 import time
-from plyer import notification
+
 from datetime import datetime ,time as dtime
-
-
 import platform
 
 if platform.system() == "Windows":
+    from plyer import notification
     import winsound
 else:
     import subprocess
@@ -21,9 +20,27 @@ def sendNotification(title,message):
             message=message,
             timeout=60
         )
+        return "Windows"
     else:
-        subprocess.run(["notify-send", title, message])
-    
+        result = subprocess.run(
+                    [
+                        "dunstify",
+                        "--action=Done,Done",
+                        "--action=No,Remind Again?",
+                        title,
+                        message,
+                    ],
+                    capture_output=True,
+                    text=True
+                )
+        
+        if result.stdout.strip()=="Done":
+            return True
+        else:
+            return False
+        
+
+
 def askUser():
     tell_me=input("Have you drink water ? :").strip().lower()
     if tell_me=="yes":
@@ -45,15 +62,15 @@ def startNotifications(delay : int ,title : str,message : str):
         now=datetime.now().time()
         if not stopStart<=now<=stopEnd:
             time.sleep(delay)
-            sendNotification(title=title,message=message)
-            time.sleep(30)
-            askUser()
+            done = sendNotification(title=title,message=message)
+            if done:
+                break
         else:
             time.sleep(3600)
             
 
 def main():
-    startNotifications(60,"paani peelo","jaldi paani peelo fast fast")
+    startNotifications(5,"paani peelo","jaldi paani peelo fast fast")
 
 if __name__ == "__main__":
     main()
