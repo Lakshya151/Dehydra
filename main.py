@@ -10,8 +10,6 @@ else:
     import subprocess
 
 
-
-
 def sendNotification(title,message):
     if platform.system() == "Windows":
         winsound.Beep(1000,400) 
@@ -48,29 +46,43 @@ def askUser():
     else:
         while True:
             time.sleep(10)
-            tell_again=input("Pani piya ? :").strip().lower()
+            tell_again=input(f"{title} ?" ).strip().lower()
             if tell_again=="yes":
                 print("OK!")
                 break
             else:
-                sendNotification(title="pani piya ?", message="Reminder: Bsdk Pani to peele ?")
+                sendNotification(title=title, message=f"Reminder:{message}")
 
-def startNotifications(delay : int ,title : str,message : str):
-    stopStart=dtime(0,0,0) 
-    stopEnd=dtime(6,0,0) 
+def startNotifications(delay : int ,title : str,message : str, startTime,stoptime):
     while True:
         now=datetime.now().time()
-        if not stopStart<=now<=stopEnd:
+        if startTime<stoptime:
+            in_stop_time=startTime<=now<=stoptime
+        else:
+            in_stop_time=now>=startTime or now<=stoptime
+        if not in_stop_time:
             time.sleep(delay)
             done = sendNotification(title=title,message=message)
             if done:
                 break
         else:
-            time.sleep(3600)
+            time.sleep(60)
             
 
 def main():
-    startNotifications(5,"paani peelo","jaldi paani peelo fast fast")
+    start_time_input = input("Enter stop start time (HH:MM:SS): ")
+    end_time_input = input("Enter stop end time (HH:MM:SS): ")
+
+    startTime=datetime.strptime(start_time_input,"%H:%M:%S").time() 
+    stoptime=datetime.strptime(end_time_input,"%H:%M:%S").time()
+
+    print(startTime,stoptime)
+    
+
+    TimeInterval=int(input("Enter the Time Interval :"))
+    ReminderFor=input("This reminder is for :")
+    Msg=input("Enter the message that you want to show in notificaton :")
+    startNotifications(TimeInterval,ReminderFor,Msg,startTime,stoptime)
 
 if __name__ == "__main__":
     main()
