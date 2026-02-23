@@ -7,7 +7,7 @@ A simple and effective hydration reminder to help you stay hydrated throughout t
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/dehydra.git
+git clone git@github.com:Lakshya151/Dehydra.git
 cd dehydra
 ```
 
